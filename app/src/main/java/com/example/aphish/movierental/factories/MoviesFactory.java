@@ -16,7 +16,7 @@ public class MoviesFactory {
         return factory;
     }
 
-    public Movie createMovies(String name,String duration,String date){
+    public static Movie createMovies(String name,String duration,String date){
         Movie movie = new Movie
                 .Builder()
                 .name(name)

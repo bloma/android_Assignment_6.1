@@ -29,6 +29,6 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp-urlconnection:3.2.0'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'org.apache.httpcomponents:httpcore:4.4.4'
-
+    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M1'
     androidTestCompile 'junit:junit:4.12'
 }

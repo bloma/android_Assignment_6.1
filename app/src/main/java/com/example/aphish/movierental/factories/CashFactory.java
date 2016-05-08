@@ -18,8 +18,8 @@ public class CashFactory {
         }
         return factory;
     }
-    public PaymentType getPaymentType(String value, double money, String name, String cardNumber){
-        if ("".equalsIgnoreCase(value)){
+    public static PaymentType getPaymentType(String value, double money, String name, String cardNumber){
+        if ("Cash".equalsIgnoreCase(value)){
             return new Cash
                     .Builder()
                     .cashPayed(money)
@@ -34,7 +34,7 @@ public class CashFactory {
         }
     }
 
-    public Cash createCash(double money,String date){
+    public static Cash createCash(double money,String date){
         Cash cash = new Cash
                 .Builder()
                 .cashPayed(money)

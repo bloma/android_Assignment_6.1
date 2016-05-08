@@ -17,7 +17,7 @@ public class ActorsFactory {
         return factory;
     }
 
-    public Actors createActors(String name,String surname,String height,String age){
+    public static Actors createActors(String name,String surname,String height,String age){
         Actors actors = new Actors
                 .Builder()
                 .name(name)

@@ -34,7 +34,7 @@ public class CreditFactory {
         }
     }
 
-    public Credit createCredit(String name,String cardNumber,String securityCode,String pin){
+    public static Credit createCredit(String name,String cardNumber,String securityCode,String pin){
         Credit credit = new Credit
                 .Builder()
                 .cardHolderName(name)

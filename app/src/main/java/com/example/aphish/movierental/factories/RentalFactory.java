@@ -20,7 +20,7 @@ public class RentalFactory {
         return factory;
     }
 
-    public Rental createRental(String date, Movie movie, Customers customers){
+    public static Rental createRental(String date, Movie movie, Customers customers){
         Rental rental = new Rental
                 .Builder()
                 .rentalNumber(UUID.randomUUID().toString())

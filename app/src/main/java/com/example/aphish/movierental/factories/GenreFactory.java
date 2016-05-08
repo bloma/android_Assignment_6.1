@@ -17,7 +17,7 @@ public class GenreFactory {
         return factory;
     }
 
-    public Genre createGenre(String name){
+    public static Genre createGenre(String name){
 
         Genre genre = new Genre
                 .Builder()

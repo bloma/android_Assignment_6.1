@@ -16,7 +16,7 @@ public class CustomersFactory {
         return factory;
     }
 
-    public Customers createCustomers(String name,String surname,String age){
+    public static Customers createCustomers(String name,String surname,String age){
         Customers customers = new Customers
                 .Builder()
                 .customerName(name)
