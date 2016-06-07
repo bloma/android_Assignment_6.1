@@ -29,15 +29,15 @@ public class MoviesRepositoryTest extends AndroidTestCase {
                 .build();
         Movie insertedMovie = moviesRepository.save(createEntity);
         id = insertedMovie.getId();
-        Assert.assertNotNull(TAG + "CREATE",insertedMovie);
+        Assert.assertNotNull(TAG + " CREATE",insertedMovie);
 
         //READ ALL
         Set<Movie> movies = moviesRepository.findAll();
-        Assert.assertTrue(TAG + "READ ALL",movies.size()>0);
+        Assert.assertTrue(TAG + " READ ALL",movies.size()>0);
 
         //READ ENTITY
        Movie movie = moviesRepository.findById(id);
-        Assert.assertNotNull(TAG + "READ ENTITY",movie);
+        Assert.assertNotNull(TAG + " READ ENTITY",movie);
 
         //UPDATE ENTITY
         Movie updateMovie = new Movie.Builder()
@@ -46,12 +46,12 @@ public class MoviesRepositoryTest extends AndroidTestCase {
                 .build();
         moviesRepository.update(updateMovie);
         Movie newMovie = moviesRepository.findById(id);
-        Assert.assertEquals(TAG + "UPDATE","Fast&Furious",newMovie.getName());
+        Assert.assertEquals(TAG + " UPDATE","Fast&Furious",newMovie.getName());
 
         //DELETE ENTITY
         moviesRepository.delete(updateMovie);
         Movie deletedMovie = moviesRepository.findById(id);
-        Assert.assertNotNull(TAG + "DELETE",deletedMovie);
+        Assert.assertNotNull(TAG + " DELETE",deletedMovie);
 
     }
 }

@@ -34,16 +34,16 @@ implements MoviesRepository{
     public static final String COLUMN_DURATION = "duration";
 
 
-    private static final String DATABASE_CREATE = "CREATE TABLE"
-            +TABLE_NAME +"("
-            +COLUMN_ID +"INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_NAME + "TEXT NOT NULL, "
-            + COLUMN_DATE + "TEXT NOT NULL, "
-            + COLUMN_DURATION + "TEXT NOT NULL, "
-            + COLUMN_ACTORS_NAME + "TEXT NOT NULL, "
-            + COLUMN_SURNAME + " TEXT NOT NULL"
-            + COLUMN_AGE + "TEXT NOT NULL, "
-            + COLUMN_HEIGHT + "TEXT NOT NULL );";
+    private static final String DATABASE_CREATE = " CREATE TABLE "
+            + TABLE_NAME +" ( "
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_NAME + " TEXT NOT NULL, "
+            + COLUMN_DATE + " TEXT NOT NULL, "
+            + COLUMN_DURATION + " TEXT NOT NULL, "
+            + COLUMN_ACTORS_NAME + " TEXT, "
+            + COLUMN_SURNAME + " TEXT, "
+            + COLUMN_AGE + " TEXT, "
+            + COLUMN_HEIGHT + " TEXT );";
 
     public MoviesRepositoryImpl(Context context){
         super(context, DBConstants.DATABASE_NAME,null,DBConstants.DATABASE_VERSION);
@@ -92,13 +92,14 @@ implements MoviesRepository{
         values.put(COLUMN_NAME,entity.getName());
         values.put(COLUMN_DURATION,entity.getDurationTime());
         values.put(COLUMN_DATE,entity.getReleaseDate());
-        values.put(COLUMN_ACTORS_NAME,entity.getActors().getName());
-        values.put(COLUMN_SURNAME,entity.getActors().getSurname());
-        values.put(COLUMN_AGE,entity.getActors().getAge());
-        values.put(COLUMN_HEIGHT,entity.getActors().getHeight());
+       // values.put(COLUMN_ACTORS_NAME,entity.getActors().getName());
+        //values.put(COLUMN_SURNAME,entity.getActors().getSurname());
+        //values.put(COLUMN_AGE,entity.getActors().getAge());
+        //values.put(COLUMN_HEIGHT,entity.getActors().getHeight());
         long id = db.insertOrThrow(TABLE_NAME,null,values);
         Movie insertedEntity = new Movie.Builder()
                 .copy(entity)
+                .id(new Long(id))
                 .build();
         return insertedEntity;
     }
@@ -111,10 +112,10 @@ implements MoviesRepository{
         values.put(COLUMN_NAME,entity.getName());
         values.put(COLUMN_DURATION,entity.getDurationTime());
         values.put(COLUMN_DATE,entity.getReleaseDate());
-        values.put(COLUMN_ACTORS_NAME,entity.getActors().getName());
-        values.put(COLUMN_SURNAME,entity.getActors().getSurname());
-        values.put(COLUMN_AGE,entity.getActors().getAge());
-        values.put(COLUMN_HEIGHT,entity.getActors().getHeight());
+        //values.put(COLUMN_ACTORS_NAME,entity.getActors().getName());
+        //values.put(COLUMN_SURNAME,entity.getActors().getSurname());
+        //values.put(COLUMN_AGE,entity.getActors().getAge());
+        //values.put(COLUMN_HEIGHT,entity.getActors().getHeight());
         db.update(TABLE_NAME,values,COLUMN_ID + "=?",
                 new String[]{String.valueOf(entity.getId())});
         return entity;
