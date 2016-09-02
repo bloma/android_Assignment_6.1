@@ -6,11 +6,17 @@ import java.io.Serializable;
  * Created by Aphish on 2016/04/22.
  */
 public class Customers implements Serializable {
+
+    private Long id;
     private String name;
     private String surname;
     private String age;
 
     private Customers(){}
+
+    public Long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -25,6 +31,7 @@ public class Customers implements Serializable {
     }
 
     public Customers(Builder builder){
+        this.id=builder.id;
         this.name=builder.name;
         this.surname=builder.surname;
         this.age=builder.age;
@@ -32,9 +39,15 @@ public class Customers implements Serializable {
 
     public static class Builder{
 
+        private Long id;
         private String name;
         private String surname;
         private String age;
+
+        public Builder id(Long id){
+            this.id =id;
+            return this;
+        }
 
         public Builder customerName(String name){
             this.name=name;
@@ -52,6 +65,7 @@ public class Customers implements Serializable {
         }
 
         public Builder copy(Customers customers){
+            this.id=customers.id;
             this.name=customers.name;
             this.surname=customers.surname;
             this.age=customers.age;
@@ -64,4 +78,19 @@ public class Customers implements Serializable {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Customers customers = (Customers) o;
+
+        return id.equals(customers.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

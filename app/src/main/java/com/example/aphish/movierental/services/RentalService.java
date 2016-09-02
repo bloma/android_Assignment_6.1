@@ -7,12 +7,12 @@ import com.example.aphish.movierental.domain.Customers;
 import com.example.aphish.movierental.domain.Movie;
 import com.example.aphish.movierental.domain.Rental;
 
+import java.util.Set;
+
 /**
  * Created by Aphish on 2016/05/07.
  */
-public interface RentalService {
+public interface RentalService extends Service<Rental,Long>{
 
-   String activateRental(String date, Movie movie, Customers customers);
-    boolean isActivated();
-    boolean isDeactivated();
+
 }

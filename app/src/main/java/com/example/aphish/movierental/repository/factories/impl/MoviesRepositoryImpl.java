@@ -21,14 +21,10 @@ import java.util.Set;
 public class MoviesRepositoryImpl extends SQLiteOpenHelper
 implements MoviesRepository{
 
-    public static final String TABLE_NAME = "Movies";
+    public static final String TABLE_NAME = "movies";
     private SQLiteDatabase db;
 
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_ACTORS_NAME = "actorsName";
-    public static final String COLUMN_SURNAME = "surname";
-    public static final String COLUMN_AGE = "age";
-    public static final String COLUMN_HEIGHT = "height";
     public static final String COLUMN_NAME = "movieName";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_DURATION = "duration";
@@ -39,11 +35,7 @@ implements MoviesRepository{
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_NAME + " TEXT NOT NULL, "
             + COLUMN_DATE + " TEXT NOT NULL, "
-            + COLUMN_DURATION + " TEXT NOT NULL, "
-            + COLUMN_ACTORS_NAME + " TEXT, "
-            + COLUMN_SURNAME + " TEXT, "
-            + COLUMN_AGE + " TEXT, "
-            + COLUMN_HEIGHT + " TEXT );";
+            + COLUMN_DURATION + " TEXT NOT NULL );";
 
     public MoviesRepositoryImpl(Context context){
         super(context, DBConstants.DATABASE_NAME,null,DBConstants.DATABASE_VERSION);
@@ -62,11 +54,8 @@ implements MoviesRepository{
                 new String[]{
                         COLUMN_ID,
                         COLUMN_NAME,
-                        COLUMN_DURATION,
-                        COLUMN_ACTORS_NAME,
-                        COLUMN_SURNAME,COLUMN_AGE,
-                        COLUMN_HEIGHT,COLUMN_DATE},
-                COLUMN_ID + "=?",
+                        COLUMN_DURATION,COLUMN_DATE},
+                COLUMN_ID + " =?",
                 new String[]{String.valueOf(id)},
                 null,null,null,null);
         if (cursor.moveToFirst()){
@@ -75,8 +64,6 @@ implements MoviesRepository{
                     .name(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)))
                     .durationTime(cursor.getString(cursor.getColumnIndex(COLUMN_DURATION)))
                     .releaseDate(cursor.getString(cursor.getColumnIndex(COLUMN_DATE)))
-                    //.actors(cursor.getClass().getField(cursor.getString(cursor.getColumnIndex(COLUMN_ACTORS_NAME))))
-
                     .build();
             return movie;
         }else {
@@ -92,12 +79,9 @@ implements MoviesRepository{
         values.put(COLUMN_NAME,entity.getName());
         values.put(COLUMN_DURATION,entity.getDurationTime());
         values.put(COLUMN_DATE,entity.getReleaseDate());
-       // values.put(COLUMN_ACTORS_NAME,entity.getActors().getName());
-        //values.put(COLUMN_SURNAME,entity.getActors().getSurname());
-        //values.put(COLUMN_AGE,entity.getActors().getAge());
-        //values.put(COLUMN_HEIGHT,entity.getActors().getHeight());
+
         long id = db.insertOrThrow(TABLE_NAME,null,values);
-        Movie insertedEntity = new Movie.Builder()
+       Movie insertedEntity = new Movie.Builder()
                 .copy(entity)
                 .id(new Long(id))
                 .build();
@@ -112,11 +96,8 @@ implements MoviesRepository{
         values.put(COLUMN_NAME,entity.getName());
         values.put(COLUMN_DURATION,entity.getDurationTime());
         values.put(COLUMN_DATE,entity.getReleaseDate());
-        //values.put(COLUMN_ACTORS_NAME,entity.getActors().getName());
-        //values.put(COLUMN_SURNAME,entity.getActors().getSurname());
-        //values.put(COLUMN_AGE,entity.getActors().getAge());
-        //values.put(COLUMN_HEIGHT,entity.getActors().getHeight());
-        db.update(TABLE_NAME,values,COLUMN_ID + "=?",
+
+        db.update(TABLE_NAME,values,COLUMN_ID + " =? ",
                 new String[]{String.valueOf(entity.getId())});
         return entity;
     }
@@ -124,7 +105,7 @@ implements MoviesRepository{
     @Override
     public Movie delete(Movie entity){
         open();
-        db.delete(TABLE_NAME,COLUMN_ID + "=?",new String[]{String.valueOf(entity.getId())});
+        db.delete(TABLE_NAME,COLUMN_ID + " =? ",new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
@@ -161,8 +142,8 @@ implements MoviesRepository{
 
     @Override
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
-        Log.w(this.getClass().getName(),"Upgrading adatabase from version" +
-        oldVersion +"to" + newVersion + ", which will destroy all old data");
+        Log.w(this.getClass().getName(),"Upgrading adatabase from version " +
+        oldVersion +" to " + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS" + TABLE_NAME);
         onCreate(db);
     }

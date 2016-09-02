@@ -8,9 +8,9 @@ import com.example.aphish.movierental.domain.PaymentType;
  * Created by Aphish on 2016/04/22.
  */
 public class CashFactory {
-    private  static CashFactory factory;
+    private  static CashFactory factory = null;
 
-    private CashFactory(){}
+    public CashFactory(){}
 
     public static CashFactory getInstance(){
         if (factory == null){
@@ -18,25 +18,11 @@ public class CashFactory {
         }
         return factory;
     }
-    public static PaymentType getPaymentType(String value, double money, String name, String cardNumber){
-        if ("Cash".equalsIgnoreCase(value)){
-            return new Cash
-                    .Builder()
-                    .cashPayed(money)
-                    .build();
-        }else {
-            return new Credit
-                    .Builder()
-                    .cardHolderName(name)
-                    .cardNumber(cardNumber)
-                    .Amount(money)
-                    .build();
-        }
-    }
 
-    public static Cash createCash(double money,String date){
+    public static Cash createCash(Long id,double money,String date){
         Cash cash = new Cash
                 .Builder()
+                .id(id)
                 .cashPayed(money)
                 .date(date)
                 .build();

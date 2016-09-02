@@ -9,33 +9,32 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.aphish.movierental.conf.databases.DBConstants;
-import com.example.aphish.movierental.domain.Rental;
-import com.example.aphish.movierental.repository.factories.RentalRepository;
+import com.example.aphish.movierental.domain.Cash;
+import com.example.aphish.movierental.repository.factories.CashRepository;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Aphish on 2016/04/23.
+ * Created by Aphish on 2016/09/02.
  */
-public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepository {
+public class CashRepositoryImpl extends SQLiteOpenHelper implements CashRepository {
 
-    public static final String TABLE_NAME = "rentals";
+    public static final String TABLE_NAME = "cash";
     private SQLiteDatabase db;
 
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_RENTAL_DATE = "rental_Date";
-    public static final String COLUMN_RENTAL_NUMBER = "rental_Number";
-
+    public static final String COLUMN_CASH_PAYED = "actorsName";
+    public static final String COLUMN_DATE = "surname";
 
     private static final String DATABASE_CREATE = " CREATE TABLE "
-            +TABLE_NAME +" ( "
-            +COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_RENTAL_DATE + " TEXT NOT NULL, "
-            + COLUMN_RENTAL_NUMBER + " TEXT NOT NULL );";
+            + TABLE_NAME +" ( "
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_CASH_PAYED + " TEXT, "
+            + COLUMN_DATE + " TEXT );";
 
-    public RentalRepositoryImpl(Context context){
-        super(context, DBConstants.DATABASE_NAME,null,DBConstants.DATABASE_VERSION);
+    public CashRepositoryImpl(Context context) {
+        super(context, DBConstants.DATABASE_NAME, null, DBConstants.DATABASE_VERSION);
     }
 
     public void open()throws SQLException {
@@ -45,76 +44,79 @@ public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepo
     public void close(){this.close();}
 
     @Override
-    public Rental findById(Long id) {
+    public Cash findById(Long aLong) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{
                         COLUMN_ID,
-                        COLUMN_RENTAL_DATE,
-                        COLUMN_RENTAL_NUMBER},
+                        COLUMN_CASH_PAYED,
+                        COLUMN_DATE },
                 COLUMN_ID + "=?",
-                new String[]{String.valueOf(id)},
+                new String[]{String.valueOf(aLong)},
                 null,null,null,null);
         if (cursor.moveToFirst()){
-            final Rental rental = new Rental.Builder()
+            final Cash cash = new Cash.Builder()
                     .id(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)))
-                    .rentalDate(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_DATE)))
-                    .rentalNumber(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_NUMBER)))
+                    .cashPayed(cursor.getDouble(cursor.getColumnIndex(COLUMN_CASH_PAYED)))
+                    .date(cursor.getString(cursor.getColumnIndex(COLUMN_DATE)))
                     .build();
-            return rental;
+            return cash;
         }else {
             return null;
         }
     }
 
     @Override
-    public Rental save(Rental entity) {
+    public Cash save(Cash entity) {
         open();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RENTAL_DATE,entity.getRentalDate());
-        values.put(COLUMN_RENTAL_NUMBER,entity.getRentalNumber());
+        values.put(COLUMN_ID,entity.getId());
+        values.put(COLUMN_CASH_PAYED,entity.getCashPayed());
+        values.put(COLUMN_DATE,entity.getDate());
+
         long id = db.insertOrThrow(TABLE_NAME,null,values);
-        Rental insertedEntity = new Rental.Builder()
+        Cash insertedEntity = new Cash.Builder()
                 .copy(entity)
+                .id(new Long(id))
                 .build();
         return insertedEntity;
     }
 
     @Override
-    public Rental update(Rental entity) {
+    public Cash update(Cash entity) {
         open();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RENTAL_NUMBER,entity.getRentalNumber());
-        values.put(COLUMN_RENTAL_DATE,entity.getRentalDate());
+        values.put(COLUMN_CASH_PAYED,entity.getCashPayed());
+        values.put(COLUMN_DATE,entity.getDate());
+
         db.update(TABLE_NAME,values,COLUMN_ID + "=?",
                 new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
     @Override
-    public Rental delete(Rental entity) {
-
+    public Cash delete(Cash entity) {
         open();
         db.delete(TABLE_NAME,COLUMN_ID + "=?",new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
     @Override
-    public Set<Rental> findAll() {
+    public Set<Cash> findAll() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Set<Rental> rental = new HashSet<>();
+        Set<Cash> cash = new HashSet<>();
         open();
         Cursor cursor = db.query(TABLE_NAME,null,null,null,null,null,null);
         if (cursor.moveToFirst()){
             do {
-                final Rental rentals = new Rental.Builder()
-                        .rentalNumber(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_NUMBER)))
-                        .rentalDate(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_DATE)))
+                final Cash pay = new Cash.Builder()
+                        .cashPayed(cursor.getInt(cursor.getColumnIndex(COLUMN_CASH_PAYED)))
+                        .date(cursor.getString(cursor.getColumnIndex(COLUMN_DATE)))
                         .build();
-                rental.add(rentals);
+                cash.add(pay);
             }while (cursor.moveToNext());
         }
-        return rental;
+        return cash;
     }
 
     @Override
@@ -136,6 +138,5 @@ public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepo
                 oldVersion +"to" + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS" + TABLE_NAME);
         onCreate(db);
-
     }
 }

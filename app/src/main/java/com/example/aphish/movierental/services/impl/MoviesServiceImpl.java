@@ -1,55 +1,62 @@
 package com.example.aphish.movierental.services.impl;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
-import com.example.aphish.movierental.conf.util.DomainState;
+import com.example.aphish.movierental.conf.util.App;
 import com.example.aphish.movierental.domain.Movie;
-import com.example.aphish.movierental.factories.MoviesFactory;
 import com.example.aphish.movierental.repository.factories.MoviesRepository;
+import com.example.aphish.movierental.repository.factories.impl.MoviesRepositoryImpl;
 import com.example.aphish.movierental.services.MoviesService;
 
-/**
- * Created by Aphish on 2016/05/08.
- */
-public class MoviesServiceImpl extends Service implements MoviesService {
+import java.util.Set;
 
-    private final IBinder localBinder = new ActivateServiceLocalBinder();
-    private MoviesRepository moviesRepository;
+//This is a Bound Service
+//Bound service offers interaction between client and server
+//customers will login and choose a movie to rent
 
-    @Override
-    public String activateMovie(String name, String duration, String date) {
 
-        if (true){
-            Movie movie = MoviesFactory.createMovies(name, duration, date);
-            return DomainState.ACTIVATED.name();
-        }else{
-            return DomainState.NOTACTIVATED.name();
-        }
+public class MoviesServiceImpl implements MoviesService {
+
+private final IBinder localBinder = new MovieServiceLocalBinder();
+private MoviesRepository moviesRepository;
+
+    MoviesServiceImpl(){
+        moviesRepository = new MoviesRepositoryImpl(App.getAppContext());
     }
 
-    @Override
-    public boolean isActivated() {
-        return moviesRepository.findAll().size() > 0;
-    }
-
-    @Override
-    public boolean isDeactivated() {
-       int rows = moviesRepository.deleteAll();
-        return rows > 0;
-    }
-
-    @Override
     public IBinder onBind(Intent intent) {
         return localBinder;
     }
 
-    public class ActivateServiceLocalBinder extends Binder{
+    private class MovieServiceLocalBinder extends Binder{
         public MoviesServiceImpl getService(){
             return MoviesServiceImpl.this;
         }
+    }
+
+    @Override
+    public Movie findByID(Long id) {
+        if (moviesRepository.findById(id)==null){
+            return null;
+        }else {
+            return moviesRepository.findById(id);
+        }
+    }
+
+    @Override
+    public Movie save(Movie movie) {
+        return moviesRepository.save(movie);
+    }
+
+    @Override
+    public Set<Movie> findAll() {
+        return moviesRepository.findAll();
+    }
+
+    @Override
+    public void delete(Movie entity) {
+        moviesRepository.delete(entity);
     }
 }

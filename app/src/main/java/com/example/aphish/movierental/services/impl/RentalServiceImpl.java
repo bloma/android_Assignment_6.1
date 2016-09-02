@@ -1,61 +1,71 @@
 package com.example.aphish.movierental.services.impl;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
 
 import com.example.aphish.movierental.conf.util.App;
-import com.example.aphish.movierental.conf.util.DomainState;
-import com.example.aphish.movierental.domain.Customers;
-import com.example.aphish.movierental.domain.Movie;
 import com.example.aphish.movierental.domain.Rental;
-import com.example.aphish.movierental.factories.RentalFactory;
 import com.example.aphish.movierental.repository.factories.RentalRepository;
 import com.example.aphish.movierental.repository.factories.impl.RentalRepositoryImpl;
 import com.example.aphish.movierental.services.RentalService;
 
-public class RentalServiceImpl extends Service implements RentalService{
+import java.util.Set;
+
+//This is an Intent Service
+//This application is meant to rent a movie that a customer will choose
+//The intent service is good because it wont affect with user experience
+
+public class RentalServiceImpl implements RentalService{
 
     private final IBinder localBinder = new RentalServiceLocalBinder();
-    private RentalRepository repo;
+    private RentalRepository repository;
+    private static RentalServiceImpl service = null;
 
-    public RentalServiceImpl(){}
-
-    @Override
-    public IBinder onBind(Intent intent) {
-
+    public IBinder onBind(Intent intent){
         return localBinder;
     }
 
+    public static RentalServiceImpl getInstance(){
+        if (service == null){
+            service = new RentalServiceImpl();
+        }
+        return service;
+    }
+
     public class RentalServiceLocalBinder extends Binder{
-        public RentalServiceImpl getService(){return RentalServiceImpl.this;}
+        public RentalServiceImpl getService(){
+            return RentalServiceImpl.this;
+        }
+
+    }
+
+    public RentalServiceImpl(){
+        repository = new RentalRepositoryImpl(App.getAppContext());
     }
 
     @Override
-    public String activateRental(String date,Movie movie,Customers customer) {
-        if (true){
-            Rental rental = RentalFactory.createRental(date, movie, customer);
-            return DomainState.ACTIVATED.name();
+    public Rental findByID(Long id) {
+        if(repository.findById(id) == null){
+            return null;
         }else {
-            return DomainState.NOTACTIVATED.name();
+            return repository.findById(id);
         }
     }
 
     @Override
-    public boolean isActivated() {
-
-        return repo.findAll().size()>0;
+    public Rental save(Rental rental) {
+        return repository.save(rental);
     }
 
     @Override
-    public boolean isDeactivated() {
-        int rows = repo.deleteAll();
-        return rows>0;
+    public Set<Rental> findAll() {
+        return repository.findAll();
     }
-    private Rental createRental(Rental rental){
-        repo = new RentalRepositoryImpl(App.getAppContext());
-        return repo.save(rental);
+
+    @Override
+    public void delete(Rental entity) {
+         repository.delete(entity);
     }
 }

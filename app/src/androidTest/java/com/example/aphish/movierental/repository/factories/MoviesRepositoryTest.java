@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class MoviesRepositoryTest extends AndroidTestCase {
 
-    private static final String TAG = "SETTINGS TEST";
+    private static final String TAG = "MOVIE TEST";
     private Long id;
 
     public void testCreateReadUpdateDelete()throws Exception{
@@ -46,12 +46,12 @@ public class MoviesRepositoryTest extends AndroidTestCase {
                 .build();
         moviesRepository.update(updateMovie);
         Movie newMovie = moviesRepository.findById(id);
-        Assert.assertEquals(TAG + " UPDATE","Fast&Furious",newMovie.getName());
+        Assert.assertEquals(TAG + " UPDATE","Fast&Furious 6",newMovie.getName());
 
         //DELETE ENTITY
         moviesRepository.delete(updateMovie);
         Movie deletedMovie = moviesRepository.findById(id);
-        Assert.assertNotNull(TAG + " DELETE",deletedMovie);
+        Assert.assertNull(TAG + " DELETE",deletedMovie);
 
     }
 }

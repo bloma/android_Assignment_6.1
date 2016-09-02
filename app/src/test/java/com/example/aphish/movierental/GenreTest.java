@@ -1,8 +1,5 @@
 package com.example.aphish.movierental;
 
-import com.example.aphish.movierental.domain.Genre;
-import com.example.aphish.movierental.factories.GenreFactory;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

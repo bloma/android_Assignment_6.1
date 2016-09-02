@@ -9,33 +9,37 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.aphish.movierental.conf.databases.DBConstants;
-import com.example.aphish.movierental.domain.Rental;
-import com.example.aphish.movierental.repository.factories.RentalRepository;
+import com.example.aphish.movierental.domain.Customers;
+import com.example.aphish.movierental.repository.factories.CustomersRepository;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Aphish on 2016/04/23.
+ * Created by Aphish on 2016/08/12.
  */
-public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepository {
+public class CustomersRepositoryImpl extends SQLiteOpenHelper implements CustomersRepository {
 
-    public static final String TABLE_NAME = "rentals";
+    public static final String TABLE_NAME = "customers";
     private SQLiteDatabase db;
 
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_RENTAL_DATE = "rental_Date";
-    public static final String COLUMN_RENTAL_NUMBER = "rental_Number";
+    public static final String COLUMN_CUSTOMERS_NAME = "name";
+    public static final String COLUMN_SURNAME = "surname";
+    public static final String COLUMN_AGE = "age";
+
+
 
 
     private static final String DATABASE_CREATE = " CREATE TABLE "
-            +TABLE_NAME +" ( "
-            +COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_RENTAL_DATE + " TEXT NOT NULL, "
-            + COLUMN_RENTAL_NUMBER + " TEXT NOT NULL );";
+            + TABLE_NAME +" ( "
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_CUSTOMERS_NAME + " TEXT, "
+            + COLUMN_SURNAME + " TEXT, "
+            + COLUMN_AGE + " TEXT );";
 
-    public RentalRepositoryImpl(Context context){
-        super(context, DBConstants.DATABASE_NAME,null,DBConstants.DATABASE_VERSION);
+    public CustomersRepositoryImpl(Context context) {
+        super(context, DBConstants.DATABASE_NAME, null, DBConstants.DATABASE_VERSION);
     }
 
     public void open()throws SQLException {
@@ -44,74 +48,83 @@ public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepo
 
     public void close(){this.close();}
 
+
     @Override
-    public Rental findById(Long id) {
+    public Customers findById(Long aLong) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{
                         COLUMN_ID,
-                        COLUMN_RENTAL_DATE,
-                        COLUMN_RENTAL_NUMBER},
+                        COLUMN_CUSTOMERS_NAME,
+                        COLUMN_SURNAME,
+                        COLUMN_AGE },
                 COLUMN_ID + "=?",
-                new String[]{String.valueOf(id)},
+                new String[]{String.valueOf(aLong)},
                 null,null,null,null);
         if (cursor.moveToFirst()){
-            final Rental rental = new Rental.Builder()
+            final Customers actors = new Customers.Builder()
                     .id(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)))
-                    .rentalDate(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_DATE)))
-                    .rentalNumber(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_NUMBER)))
+                    .customerName(cursor.getString(cursor.getColumnIndex(COLUMN_CUSTOMERS_NAME)))
+                    .customeruSurname(cursor.getString(cursor.getColumnIndex(COLUMN_SURNAME)))
+                    .customerAge(cursor.getString(cursor.getColumnIndex(COLUMN_AGE)))
                     .build();
-            return rental;
+            return actors;
         }else {
             return null;
         }
     }
 
     @Override
-    public Rental save(Rental entity) {
+    public Customers save(Customers entity) {
         open();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RENTAL_DATE,entity.getRentalDate());
-        values.put(COLUMN_RENTAL_NUMBER,entity.getRentalNumber());
+        values.put(COLUMN_ID,entity.getId());
+        values.put(COLUMN_CUSTOMERS_NAME,entity.getName());
+        values.put(COLUMN_SURNAME,entity.getSurname());
+        values.put(COLUMN_AGE,entity.getAge());
+
         long id = db.insertOrThrow(TABLE_NAME,null,values);
-        Rental insertedEntity = new Rental.Builder()
+        Customers insertedEntity = new Customers.Builder()
                 .copy(entity)
+                .id(new Long(id))
                 .build();
         return insertedEntity;
     }
 
     @Override
-    public Rental update(Rental entity) {
+    public Customers update(Customers entity) {
         open();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RENTAL_NUMBER,entity.getRentalNumber());
-        values.put(COLUMN_RENTAL_DATE,entity.getRentalDate());
+        values.put(COLUMN_CUSTOMERS_NAME,entity.getName());
+        values.put(COLUMN_SURNAME,entity.getSurname());
+        values.put(COLUMN_AGE,entity.getAge());
+
         db.update(TABLE_NAME,values,COLUMN_ID + "=?",
                 new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
     @Override
-    public Rental delete(Rental entity) {
-
+    public Customers delete(Customers entity) {
         open();
         db.delete(TABLE_NAME,COLUMN_ID + "=?",new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
     @Override
-    public Set<Rental> findAll() {
+    public Set<Customers> findAll() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Set<Rental> rental = new HashSet<>();
+        Set<Customers> rental = new HashSet<>();
         open();
         Cursor cursor = db.query(TABLE_NAME,null,null,null,null,null,null);
         if (cursor.moveToFirst()){
             do {
-                final Rental rentals = new Rental.Builder()
-                        .rentalNumber(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_NUMBER)))
-                        .rentalDate(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_DATE)))
+                final Customers customer = new Customers.Builder()
+                        .customerName(cursor.getString(cursor.getColumnIndex(COLUMN_CUSTOMERS_NAME)))
+                        .customeruSurname(cursor.getString(cursor.getColumnIndex(COLUMN_SURNAME)))
+                        .customerAge(cursor.getString(cursor.getColumnIndex(COLUMN_AGE)))
                         .build();
-                rental.add(rentals);
+                rental.add(customer);
             }while (cursor.moveToNext());
         }
         return rental;
@@ -127,7 +140,7 @@ public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepo
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DATABASE_CREATE);
+
     }
 
     @Override
@@ -136,6 +149,5 @@ public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepo
                 oldVersion +"to" + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS" + TABLE_NAME);
         onCreate(db);
-
     }
 }

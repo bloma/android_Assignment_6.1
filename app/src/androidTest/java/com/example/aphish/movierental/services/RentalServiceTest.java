@@ -49,7 +49,7 @@ public class RentalServiceTest extends AndroidTestCase {
 
     public void testActivateRental() throws Exception {
 
-        String activate = rentalService.activateRental("21/06/0216",movie,customer);
+        String activate = rentalService.activateRental("21/06/0216");
         Assert.assertEquals("ACTIVATED",activate);
     }
 

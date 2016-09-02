@@ -8,7 +8,7 @@ import com.example.aphish.movierental.domain.Customers;
 public class CustomersFactory {
     private static CustomersFactory factory = null;
 
-    private CustomersFactory(){}
+    public CustomersFactory(){}
 
     public static CustomersFactory getInstance(){
         if (factory == null)
@@ -16,9 +16,10 @@ public class CustomersFactory {
         return factory;
     }
 
-    public static Customers createCustomers(String name,String surname,String age){
+    public static Customers createCustomers(Long id,String name,String surname,String age){
         Customers customers = new Customers
                 .Builder()
+                .id(id)
                 .customerName(name)
                 .customeruSurname(surname)
                 .customerAge(age)

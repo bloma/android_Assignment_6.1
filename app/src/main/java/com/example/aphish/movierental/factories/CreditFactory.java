@@ -10,7 +10,7 @@ import com.example.aphish.movierental.domain.PaymentType;
 public class CreditFactory {
     private static CreditFactory factory = null;
 
-    private CreditFactory(){}
+    public CreditFactory(){}
 
     public static CreditFactory getInstance(){
         if (factory == null)
@@ -18,25 +18,10 @@ public class CreditFactory {
         return factory;
     }
 
-    public PaymentType getPaymentTYpe(String value, double money, String name, String cardNumber){
-        if ("Credit".equalsIgnoreCase(name)){
-            return new Credit
-                    .Builder()
-                    .Amount(money)
-                    .cardHolderName(name)
-                    .cardNumber(cardNumber)
-                    .build();
-        }else {
-            return new Cash
-                    .Builder()
-                    .cashPayed(money)
-                    .build();
-        }
-    }
-
-    public static Credit createCredit(String name,String cardNumber,String securityCode,String pin){
+    public static Credit createCredit(Long id,String name,String cardNumber,String securityCode,String pin){
         Credit credit = new Credit
                 .Builder()
+                .id(id)
                 .cardHolderName(name)
                 .cardNumber(cardNumber)
                 .securityCode(securityCode)

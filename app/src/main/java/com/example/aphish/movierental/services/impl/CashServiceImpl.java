@@ -1,54 +1,70 @@
 package com.example.aphish.movierental.services.impl;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
 
-import com.example.aphish.movierental.conf.util.DomainState;
+import com.example.aphish.movierental.conf.util.App;
 import com.example.aphish.movierental.domain.Cash;
-import com.example.aphish.movierental.factories.CashFactory;
-import com.example.aphish.movierental.repository.factories.RentalRepository;
+import com.example.aphish.movierental.repository.factories.CashRepository;
+import com.example.aphish.movierental.repository.factories.impl.CashRepositoryImpl;
 import com.example.aphish.movierental.services.CashService;
+
+import java.util.Set;
 
 /**
  * Created by Aphish on 2016/05/08.
  */
-public class CashServiceImpl extends Service implements CashService {
+public class CashServiceImpl implements CashService {
 
-    private final IBinder localBinder = new ActivateServiceLocalBinder();
-    private RentalRepository rentalRepository;
+    private final IBinder localBinder = new CashServiceLocalBinder();
+    private CashRepository repository;
+    private static CashServiceImpl service = null;
 
-    public CashServiceImpl(){}
+    public IBinder onBind(Intent intent){
+        return localBinder;
+    }
+
+    public static CashServiceImpl getInstance(){
+        if (service == null){
+            service = new CashServiceImpl();
+        }
+        return service;
+    }
+
+    public class CashServiceLocalBinder extends Binder{
+        public CashServiceImpl getService(){
+            return CashServiceImpl.this;
+        }
+
+    }
+
+    public CashServiceImpl(){
+        repository = new CashRepositoryImpl(App.getAppContext());
+    }
 
     @Override
-    public String activateCash(double money, String date) {
-        if (true){
-            Cash cash = CashFactory.createCash(money,date);
-            return DomainState.ACTIVATED.name();
-        }else{
-            return DomainState.NOTACTIVATED.name();
+    public Cash findByID(Long id) {
+        if(repository.findById(id) == null){
+            return null;
+        }else {
+            return repository.findById(id);
         }
     }
 
     @Override
-    public boolean isActivated() {
-        return rentalRepository.findAll().size()>0;
+    public Cash save(Cash rental) {
+        return repository.save(rental);
     }
 
     @Override
-    public boolean isDeactivated() {
-        int rows = rentalRepository.deleteAll();
-        return rows >0;
+    public Set<Cash> findAll() {
+        return repository.findAll();
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return localBinder;
-    }
-
-    public class ActivateServiceLocalBinder extends Binder{
-        public CashServiceImpl getService(){ return CashServiceImpl.this;}
+    public void delete(Cash entity) {
+        repository.delete(entity);
     }
 }

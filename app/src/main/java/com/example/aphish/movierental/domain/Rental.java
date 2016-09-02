@@ -1,21 +1,23 @@
 package com.example.aphish.movierental.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Aphish on 2016/04/22.
  */
 public class Rental implements Serializable {
-    private long id;
+    private Long id;
     private String rentalNumber;
     private  String rentalDate;
-    private Customers customers;
-    private Movie movie;
-    private PaymentType paymentType;
+    private List<Movie> movies;
+
+
+
 
     private Rental(){}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -27,16 +29,8 @@ public class Rental implements Serializable {
         return rentalDate;
     }
 
-    public Customers getCustomers() {
-        return customers;
-    }
-
-    public Movie getMovie() {
-        return movie;
-    }
-
-    public PaymentType getPaymentType() {
-        return paymentType;
+    public List<Movie> getMovies(){
+        return movies;
     }
 
     public Rental(Builder builder){
@@ -44,18 +38,18 @@ public class Rental implements Serializable {
         this.id = builder.id;
         this.rentalNumber = builder.rentalNumber;
         this.rentalDate = builder.rentalDate;
-        this.movie = builder.movie;
-        this.customers = builder.customers;
+        this.movies = builder.movies;
+
     }
 
     public static class Builder{
 
-        private long id;
+        private Long id;
         private String rentalNumber;
         private  String rentalDate;
-        private Customers customers;
-        private Movie movie;
-        private PaymentType paymentType;
+        private List<Movie> movies;
+
+
 
         public Builder rentalNumber(String rentalNumber) {
             this.rentalNumber = rentalNumber;
@@ -67,23 +61,13 @@ public class Rental implements Serializable {
             return this;
         }
 
-        public Builder id(long id){
+        public Builder id(Long id){
             this.id = id;
             return this;
         }
 
-        public Builder customers(Customers customers) {
-            this.customers = customers;
-            return this;
-        }
-
-        public Builder movie(Movie movie) {
-            this.movie = movie;
-            return this;
-        }
-
-        public Builder paymentType(PaymentType paymentType){
-            this.paymentType = paymentType;
+        public Builder movies(List<Movie> movies){
+            this.movies = movies;
             return this;
         }
 
@@ -91,9 +75,8 @@ public class Rental implements Serializable {
             this.id = rental.id;
             this.rentalDate = rental.rentalDate;
             this.rentalNumber = rental.rentalNumber;
-            this.customers = rental.customers;
-            this.movie = rental.movie;
-            this.paymentType = rental.paymentType;
+            this.movies = rental.movies;
+
             return this;
         }
 
@@ -102,4 +85,19 @@ public class Rental implements Serializable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Rental rental = (Rental) o;
+
+        return id.equals(rental.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

@@ -9,32 +9,32 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.aphish.movierental.conf.databases.DBConstants;
-import com.example.aphish.movierental.domain.Rental;
-import com.example.aphish.movierental.repository.factories.RentalRepository;
+import com.example.aphish.movierental.domain.Credit;
+import com.example.aphish.movierental.repository.factories.CreditRepository;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Aphish on 2016/04/23.
+ * Created by Aphish on 2016/09/02.
  */
-public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepository {
+public class CreditRepositoryImpl extends SQLiteOpenHelper implements CreditRepository {
 
-    public static final String TABLE_NAME = "rentals";
+    public static final String TABLE_NAME = "credit";
     private SQLiteDatabase db;
 
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_RENTAL_DATE = "rental_Date";
-    public static final String COLUMN_RENTAL_NUMBER = "rental_Number";
+    public static final String COLUMN_CARD_NUMBER = "card_Number";
+    public static final String COLUMN_AMOUNT = "amount";
 
 
     private static final String DATABASE_CREATE = " CREATE TABLE "
             +TABLE_NAME +" ( "
             +COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_RENTAL_DATE + " TEXT NOT NULL, "
-            + COLUMN_RENTAL_NUMBER + " TEXT NOT NULL );";
+            + COLUMN_CARD_NUMBER + " TEXT NOT NULL, "
+            + COLUMN_AMOUNT + " TEXT NOT NULL );";
 
-    public RentalRepositoryImpl(Context context){
+    public CreditRepositoryImpl(Context context){
         super(context, DBConstants.DATABASE_NAME,null,DBConstants.DATABASE_VERSION);
     }
 
@@ -45,76 +45,75 @@ public class RentalRepositoryImpl extends SQLiteOpenHelper implements RentalRepo
     public void close(){this.close();}
 
     @Override
-    public Rental findById(Long id) {
+    public Credit findById(Long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{
                         COLUMN_ID,
-                        COLUMN_RENTAL_DATE,
-                        COLUMN_RENTAL_NUMBER},
+                        COLUMN_CARD_NUMBER,
+                        COLUMN_AMOUNT},
                 COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)},
                 null,null,null,null);
         if (cursor.moveToFirst()){
-            final Rental rental = new Rental.Builder()
+            final Credit credit = new Credit.Builder()
+                    .Amount(cursor.getInt(cursor.getColumnIndex(COLUMN_AMOUNT)))
                     .id(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)))
-                    .rentalDate(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_DATE)))
-                    .rentalNumber(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_NUMBER)))
+                    .cardNumber(cursor.getString(cursor.getColumnIndex(COLUMN_CARD_NUMBER)))
                     .build();
-            return rental;
+            return credit;
         }else {
             return null;
         }
     }
 
     @Override
-    public Rental save(Rental entity) {
+    public Credit save(Credit entity) {
         open();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RENTAL_DATE,entity.getRentalDate());
-        values.put(COLUMN_RENTAL_NUMBER,entity.getRentalNumber());
+        values.put(COLUMN_CARD_NUMBER,entity.getCardNumber());
+        values.put(COLUMN_AMOUNT,entity.getPin());
         long id = db.insertOrThrow(TABLE_NAME,null,values);
-        Rental insertedEntity = new Rental.Builder()
+        Credit insertedEntity = new Credit.Builder()
                 .copy(entity)
                 .build();
         return insertedEntity;
     }
 
     @Override
-    public Rental update(Rental entity) {
+    public Credit update(Credit entity) {
         open();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RENTAL_NUMBER,entity.getRentalNumber());
-        values.put(COLUMN_RENTAL_DATE,entity.getRentalDate());
+        values.put(COLUMN_CARD_NUMBER,entity.getCardNumber());
+        values.put(COLUMN_AMOUNT,entity.getPin());
         db.update(TABLE_NAME,values,COLUMN_ID + "=?",
                 new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
     @Override
-    public Rental delete(Rental entity) {
-
+    public Credit delete(Credit entity) {
         open();
         db.delete(TABLE_NAME,COLUMN_ID + "=?",new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
     @Override
-    public Set<Rental> findAll() {
+    public Set<Credit> findAll() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Set<Rental> rental = new HashSet<>();
+        Set<Credit> credit = new HashSet<>();
         open();
         Cursor cursor = db.query(TABLE_NAME,null,null,null,null,null,null);
         if (cursor.moveToFirst()){
             do {
-                final Rental rentals = new Rental.Builder()
-                        .rentalNumber(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_NUMBER)))
-                        .rentalDate(cursor.getString(cursor.getColumnIndex(COLUMN_RENTAL_DATE)))
+                final Credit pay = new Credit.Builder()
+                        .cardNumber(cursor.getString(cursor.getColumnIndex(COLUMN_CARD_NUMBER)))
+                        .Amount(cursor.getInt(cursor.getColumnIndex(COLUMN_AMOUNT)))
                         .build();
-                rental.add(rentals);
+                credit.add(pay);
             }while (cursor.moveToNext());
         }
-        return rental;
+        return credit;
     }
 
     @Override

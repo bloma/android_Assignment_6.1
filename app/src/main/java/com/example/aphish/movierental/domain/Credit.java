@@ -6,6 +6,8 @@ import java.io.Serializable;
  * Created by Aphish on 2016/04/22.
  */
 public class Credit implements Serializable,PaymentType{
+
+    private Long id;
     private String cardNumber;
     private String pin;
     private String cardHolderName;
@@ -15,11 +17,16 @@ public class Credit implements Serializable,PaymentType{
     private Credit(){}
 
     public Credit(Builder builder){
+        this.id=builder.id;
         this.cardHolderName=builder.cardHolderName;
         this.cardNumber=builder.cardNumber;
         this.pin=builder.pin;
         this.securityCode=builder.securityCode;
         this.amount=builder.amount;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getCardNumber() {
@@ -44,11 +51,17 @@ public class Credit implements Serializable,PaymentType{
     }
 
     public static class Builder{
+        private Long id;
         private String cardNumber;
         private String pin;
         private String cardHolderName;
         private String securityCode;
         private double amount;
+
+        public Builder id(Long id){
+            this.id=id;
+            return this;
+        }
 
         public Builder cardNumber(String cardNumber){
             this.cardNumber= cardNumber;
@@ -76,6 +89,7 @@ public class Credit implements Serializable,PaymentType{
         }
 
         public Builder copy(Credit credit){
+            this.id=credit.id;
             this.cardNumber=credit.cardNumber;
             this.pin=credit.pin;
             this.securityCode=credit.securityCode;
@@ -89,5 +103,19 @@ public class Credit implements Serializable,PaymentType{
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Credit credit = (Credit) o;
+
+        return id.equals(credit.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

@@ -1,55 +1,69 @@
 package com.example.aphish.movierental.services.impl;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
 
-import com.example.aphish.movierental.conf.util.DomainState;
+import com.example.aphish.movierental.conf.util.App;
 import com.example.aphish.movierental.domain.Actors;
-import com.example.aphish.movierental.factories.ActorsFactory;
-import com.example.aphish.movierental.repository.factories.MoviesRepository;
+import com.example.aphish.movierental.repository.factories.ActorsRepository;
+import com.example.aphish.movierental.repository.factories.impl.ActorsRepositoryImpl;
 import com.example.aphish.movierental.services.ActorsService;
+
+import java.util.Set;
 
 /**
  * Created by Aphish on 2016/05/08.
  */
-public class ActorsServiceImpl extends Service implements ActorsService {
-    private final IBinder localBinder = new ActivateServiceLocalBinder();
-    private MoviesRepository moviesRepository;
-    @Override
-    public String activateActor(String name, String surname, String height, String age) {
-        if (true){
-             Actors actors = ActorsFactory.createActors(name, surname, height, age);
-            return DomainState.ACTIVATED.name();
-        }else{
-            return DomainState.NOTACTIVATED.name();
-        }
-    }
+public class ActorsServiceImpl implements ActorsService {
+    private final IBinder localBinder = new ActorServiceLocalBinder();
+    private ActorsRepository repository;
+    private static ActorsServiceImpl service = null;
 
-    @Override
-    public boolean isActivated() {
-
-        return moviesRepository.findAll().size()>0;
-    }
-
-    @Override
-    public boolean isDeactivated() {
-        int rows = moviesRepository.deleteAll();
-        return rows > 0;
-    }
-
-
-    @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(Intent intent){
         return localBinder;
     }
 
-    public class ActivateServiceLocalBinder extends Binder{
+    public static ActorsServiceImpl getInstance(){
+        if (service == null){
+            service = new ActorsServiceImpl();
+        }
+        return service;
+    }
+
+    public class ActorServiceLocalBinder extends Binder{
         public ActorsServiceImpl getService(){
             return ActorsServiceImpl.this;
         }
+
+    }
+
+    public ActorsServiceImpl(){
+        repository = new ActorsRepositoryImpl(App.getAppContext());
+    }
+
+    @Override
+    public Actors findByID(Long id) {
+        if(repository.findById(id) == null){
+            return null;
+        }else {
+           return repository.findById(id);
+        }
+    }
+
+    @Override
+    public Actors save(Actors actors) {
+        return repository.save(actors);
+    }
+
+    @Override
+    public Set<Actors> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public void delete(Actors entity) {
+        repository.delete(entity);
     }
 }

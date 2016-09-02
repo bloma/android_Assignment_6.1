@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 
 public class Actors implements Serializable{
+
+    private Long id;
     private String name;
     private String age;
     private String surname;
@@ -15,10 +17,15 @@ public class Actors implements Serializable{
     private Actors(){}
 
     public Actors(Builder builder){
+        this.id=builder.id;
         this.name=builder.name;
         this.surname=builder.surname;
         this.age=builder.age;
         this.height=builder.height;
+    }
+
+    public Long getId(){
+        return id;
     }
 
     public String getName() {
@@ -38,10 +45,17 @@ public class Actors implements Serializable{
     }
 
     public static class Builder{
+
+        private Long id;
         private String name;
         private String age;
         private String surname;
         private String height;
+
+        public Builder id(Long id){
+            this.id = id;
+            return this;
+        }
 
         public Builder name(String name){
             this.name=name;
@@ -64,6 +78,8 @@ public class Actors implements Serializable{
         }
 
         public Builder copy(Actors actors){
+
+            this.id=actors.id;
             this.name=actors.name;
             this.surname=actors.surname;
             this.age=actors.age;
@@ -76,4 +92,24 @@ public class Actors implements Serializable{
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Actors actors = (Actors) o;
+
+        if (!id.equals(actors.id)) return false;
+        if (name != null ? !name.equals(actors.name) : actors.name != null) return false;
+        if (age != null ? !age.equals(actors.age) : actors.age != null) return false;
+        if (surname != null ? !surname.equals(actors.surname) : actors.surname != null)
+            return false;
+        return height != null ? height.equals(actors.height) : actors.height == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class RentalsRepositoryTest extends AndroidTestCase{
 
-    private static final String TAG = "RENTINGS TEST";
+    private static final String TAG = "SETTINGS TEST";
     private Long id;
 
     public void testCreateReadUpdateDelete()throws Exception{
@@ -22,7 +22,6 @@ public class RentalsRepositoryTest extends AndroidTestCase{
 
         //CREATE
         Rental createEntity = new Rental.Builder()
-                .rentalNumber("1523")
                 .rentalDate("12/07/2016")
                 .build();
         Rental insertedEntity = rentalRepository.save(createEntity);
@@ -40,11 +39,11 @@ public class RentalsRepositoryTest extends AndroidTestCase{
         //UPDATE ENTITY
         Rental updateEntity = new Rental.Builder()
                 .copy(rental)
-                .rentalNumber("1525")
+                .rentalDate("13/08/2016")
                 .build();
         rentalRepository.update(updateEntity);
         Rental newRental = rentalRepository.findById(id);
-        Assert.assertEquals(TAG+"UPDATE ENTITY","1523",newRental.getRentalNumber());
+        Assert.assertEquals(TAG+"UPDATE ENTITY","13/07/2016",newRental.getRentalDate());
 
         //DELETE ENTITY
         rentalRepository.delete(updateEntity);
